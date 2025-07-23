@@ -11,8 +11,8 @@ import os                                                       # Used for file 
 from bs4 import BeautifulSoup
 import requests
 import math
-
-
+from dotenv import load_dotenv
+load_dotenv()
 
 #Create minimal app
 app = Flask(__name__)
@@ -22,13 +22,13 @@ db=SQLAlchemy(app)                                                  #For databas
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'                      #Redirects users to the /login page if they try to access a protected page
-app.secret_key = 'a1f5e3b7d0c89e1a9b3f4d6c7a2d5e8f'         # features like session[] won’t work securely if secret key not used, prevents data tampering by the user
+app.secret_key = os.environ.get('SECRET_KEY')        # features like session[] won’t work securely if secret key not used, prevents data tampering by the user
 migrate = Migrate(app,db)                                       #To modify data
 UPLOAD_FOLDER = os.path.join('static', 'uploads')               #Creates folder if not already exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)                           #ensures you don’t get an error if the folder already exists.
-CLIENT_ID = "69366314257-bm4j2m44j21a51n2pdjoqnr7cf8mupib.apps.googleusercontent.com"
-CLIENT_SECRET = "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"
-REDIRECT_URI = "http://127.0.0.1:5000/auth/callback"
+CLIENT_ID = os.environ.get('CLIENT_ID')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+REDIRECT_URI = os.environ.get('REDIRECT_URI')
 
 #Class Blog - create columns for database
 
