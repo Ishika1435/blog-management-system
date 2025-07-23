@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock title %}
+
+{% block body %}
+<div class="text-wrapper" style="padding-top: 80px;">
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="w-100" style="max-width: 400px;" >
+            <form method="POST" action="/register" class="bg-white shadow-sm p-4 rounded-4">
+                <div class="text-center mb-4">
+                    <h1 class="h4 fw-semibold mt-3">Sign Up</h1>
+                </div>
+
+                <!-- Google Sign-In Button -->
+                <a href="/auth/google" class="btn btn-dark w-100 mb-3">
+                    <i class="bi bi-google me-2"></i> Sign up with Google
+                </a>
+
+                <!-- OR divider -->
+                <div class="d-flex align-items-center my-3">
+                    <hr class="flex-grow-1">
+                    <span class="mx-2 text-muted small">OR</span>
+                    <hr class="flex-grow-1">
+                </div>
+
+                <!-- Username -->
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" id="Input" name="username" required placeholder="Username">
+                    <label for="Input">Username</label>
+                </div>
+
+                <!-- Email -->
+                <div class="form-floating mb-2">
+                    <input type="email" class="form-control" id="floatingInput" name="email" required placeholder="name@example.com">
+                    <label for="floatingInput">Email address</label>
+                </div>
+
+                <!-- Password -->
+                <div class="form-floating mb-4">
+                    <input type="password" class="form-control" id="floatingPassword" name="password" required placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div>
+
+                <!-- Submit -->
+                <button class="btn btn-primary w-100 py-2" type="submit">Sign up</button>
+
+                <p class="mt-4 text-center text-muted small">Already have an account?
+                    <a href="/login" class="text-decoration-none">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

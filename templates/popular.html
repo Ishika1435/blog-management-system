@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Popular{% endblock title %}
+{% block body %}
+<div class="text-wrapper">
+    <h1 class="popular-blogs fw-bold py-5 text-center" style="font-size: 75px;">POPULAR BLOGS</h1>
+    <div class="container my-4">
+        {% if popular_blogs %}
+        <div id="blogs-area" class="row row-cols-1 row-cols-md-3 row-cols-lg-3">
+            {% for blog in popular_blogs %}
+            <div class="col d-flex justify-content-center">
+                <div class="card border-0 hover-shadow py-3 px-2" style="width: 18rem;">
+                    <img src="{{ url_for('static', filename='uploads/' ~ blog.cover_image) }}"
+                        class="card-img-top card-img" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{blog.title}}</h5>
+                        <p class="card-text">{{blog.description}}</p>
+                        <a href="{{url_for('read', id=blog.id)}}" class="btn btn-light">READ</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center text-muted mt-5">
+        <h5>No blogs found in this category.</h5>
+    </div>
+    {% endif %}
+
+    <div class="pagination">
+        {% if popular_blogs.has_prev %}
+        <a href="{{ url_for('popular', page=popular_blogs.prev_num) }}">Previous</a>
+        {% endif %}
+
+        {% if popular_blogs.has_next %}
+        <a href="{{ url_for('lpopular', page=popular_blogs.next_num) }}">Next</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock body %}

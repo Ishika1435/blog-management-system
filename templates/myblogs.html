@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}My Blogs{% endblock title %}
+{% block body %}
+<div class="text-wrapper">
+    <div class="container mt-4">
+        <h2 class="mb-4">{{ page_title or "My Blogs" }}</h2>
+
+        <div class="row">
+            {% for blog in user_blogs %}
+            <div class="col-md-6 mb-4 d-flex justify-content-center">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ blog.title }}</h5>
+                        <p class="card-text text-muted mb-2">{{ blog.author }}</p>
+
+                        <!-- Read -->
+                        <a href="{{ url_for('read', id=blog.id) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-eye"></i> Read
+                        </a>
+
+                        {% if current_user.is_authenticated and blog.user_id == current_user.id %}
+                        <!-- Edit -->
+                        <a href="{{ url_for('edit', id=blog.id) }}" class="btn btn-outline-primary btn-sm ms-2">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+
+                        <!-- Delete Trigger -->
+                        <button type="button" class="btn btn-outline-danger btn-sm ms-2" data-bs-toggle="modal"
+                            data-bs-target="#deleteModal{{ blog.id }}">
+                            <i class="bi bi-trash3"></i> Delete
+                        </button>
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal{{ blog.id }}" tabindex="-1"
+                            aria-labelledby="deleteModalLabel{{ blog.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel{{ blog.id }}">Delete Blog</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete <strong>{{ blog.title }}</strong>?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                            data-bs-dismiss="modal">No</button>
+                                        <form action="{{ url_for('delete', id=blog.id) }}" method="POST"
+                                            style="display:inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endblock body %}

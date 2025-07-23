@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock title %}
+{% block body %}
+<div class="text-wrapper" style="padding-top: 10% !important;">
+    <div class="glass-card container-fluid" id="dashCard">
+        <img src="{{ user['picture'] }}" alt="User Image" class="profile-img">
+        <h2 class="fw-bold">Welcome, {{ user['name'] }}</h2>
+        <p class="text-muted mb-4">{{ user['email'] }}</p>
+        <a href="/" class="btn btn-custom mt-2">Go to Home</a>
+    </div>
+</div>
+
+
+    <style>
+        body {
+            background: linear-gradient(135deg, white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .glass-card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 3rem;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.2rem;
+        }
+
+        .btn-custom {
+            background-color: #000;
+            color: #fff;
+            border-radius: 50px;
+            padding: 0.6rem 2rem;
+            font-size: 1.1rem;
+            transition: 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #222;
+            transform: translateY(-2px);
+        }
+    </style>
+
+
+    <script>
+        gsap.from("#dashCard", {
+            opacity: 0,
+            y: 60,
+            duration: 1.2,
+            ease: "power3.out"
+        });
+    </script>
+
+
+
+
+
+    {% endblock body %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}{{ blog.title }}{% endblock title %}
+{% block body %}
+<div class="text-wrapper" style="padding-top: 5%;">
+    <div class="container my-5">
+        
+        <!-- Blog Title -->
+        <h1 class="display-4 fw-bold text-center mb-4">{{ blog.title }}</h1>
+
+        <!-- Blog Content -->
+        <div class="editor mb-4">
+            {{ blog.content | safe }}
+        </div>
+
+        <!-- Blog Author and Date -->
+        <div class="d-flex justify-content-between text-muted border-top pt-3 small">
+            <span>By: <strong>{{ blog.author }}</strong></span>
+            <span>Posted on: {{ blog.date_posted.strftime('%B %d, %Y') }}</span>
+        </div>
+
+        <!-- Comments Section -->
+        <hr class="my-5">
+        <h4 class="mb-4">Comments ({{ comments.total }})</h4>
+
+        {% if comments.items %}
+            {% for comment in comments.items %}
+            <div class="border rounded p-3 my-3">
+                <!-- Header row: Username and Date/Delete -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Username -->
+                    <a href="{{ url_for('user_info', username=comment.user.username) }}"
+                        class="fw-semibold text-dark text-decoration-none">
+                        {{ comment.user.username }}
+                    </a>
+                    <!-- Date + Delete -->
+                    <div class="text-end">
+                        <small class="text-muted d-block">{{ comment.date_posted.strftime('%b %d, %Y %I:%M %p') }}</small>
+                        {% if comment.user_id == current_user.id %}
+                        <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="POST"
+                            class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger mt-1">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Comment Content -->
+                <p class="mt-2 mb-1">{{ comment.content }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No comments yet.</p>
+        {% endif %}
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between mt-3">
+            {% if comments.has_prev %}
+            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('read', id=blog.id, page=comments.prev_num) }}">Previous</a>
+            {% endif %}
+            {% if comments.has_next %}
+            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('read', id=blog.id, page=comments.next_num) }}">Next</a>
+            {% endif %}
+        </div>
+
+        <!-- Comment Form or Login Prompt -->
+        <hr class="my-4">
+        {% if current_user.is_authenticated %}
+        <form method="POST">
+            <div class="mb-3">
+                <textarea name="comment" class="form-control" rows="3" placeholder="Write a comment..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+        {% else %}
+        <div class="alert alert-light border d-flex justify-content-between align-items-center mt-4" role="alert">
+            <div>
+                <i class="bi bi-lock-fill me-2 text-muted"></i>
+                <span class="text-muted">You must be logged in to post a comment.</span>
+            </div>
+            <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-primary">Login</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock body %}

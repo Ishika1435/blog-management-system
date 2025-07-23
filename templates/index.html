@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock title %}
+{% block body %}
+<!--hero-->
+<!-- HERO SECTION -->
+<section class="hero-section text-center text-white d-flex align-items-center justify-content-center position-relative"
+  style="height: 100vh; overflow: hidden;">
+
+  <!-- Background image -->
+  <img src="{{ url_for('static', filename='uploads/download.png') }}"
+    class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="hero background" style="z-index: 0;">
+
+  <!-- Dark overlay for readability -->
+  <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #2e2e2e, #000000);
+text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+;
+ z-index: 1;"></div>
+
+  <!-- Text content -->
+  <div class="position-relative z-2">
+
+    <!-- Desktop Heading -->
+    <div class="clip-wrapper d-none d-sm-block">
+      <h1 id="masked-heading-single" class="hero-title fw-bold">
+        <span>T</span><span>H</span><span>O</span><span>U</span><span>G</span><span>H</span><span>T</span><span>S</span>
+        
+        <span>W</span><span>O</span><span>R</span><span>T</span><span>H</span>
+        
+        <span>R</span><span>E</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span>
+      </h1>
+    </div>
+
+    <!-- Mobile Heading (two lines) -->
+    <div class="d-block d-sm-none">
+      <h1 id="masked-heading-double" class="hero-title fw-bold">
+        <div class="clip-wrapper">
+          <span>T</span><span>H</span><span>O</span><span>U</span><span>G</span><span>H</span><span>T</span><span>S</span>
+        </div>
+        <div class="clip-wrapper">
+          <span>W</span><span>O</span><span>R</span><span>T</span><span>H</span>
+          <span>
+          <span>R</span><span>E</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span>
+        </div>
+      </h1>
+    </div>
+
+    <!-- Subtitle and Button -->
+    <p class="hero-subtitle mt-3">A blogging platform.</p>
+    <a class="read-button btn btn-lg btn-light mt-4" href="#blogs-area" role="button">Start Reading &rarr;</a>
+  </div>
+</section>
+
+
+<!--hero ends-->
+
+<!--Latest blogs-->
+<a href="{{ url_for('latest') }}" style="text-decoration: none; color: inherit;"><h1 id="blogs-area" class="latest-blogs fw-bold py-5 text-center" style="font-size: 75px;">LATEST BLOGS</h1></a>
+<div class="container my-4">
+    {% if blogs %}
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-3">
+        {% for blog in latest_blogs %}
+        <div class="col d-flex justify-content-center">
+            <div class="card border-0 hover-shadow py-3 px-2" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='uploads/' ~ blog.cover_image) }}"
+                    class="card-img-top card-img img-fluid" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{blog.title}}</h5>
+                    <p class="card-text">{{blog.description}}</p>
+                    <p class="text-muted">{{blog.read_time}} min read</p>
+                    <a href="{{url_for('read', id=blog.id)}}" class="btn btn-light">READ</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="text-center text-muted mt-5">
+    <h5>No blogs found in this category.</h5>
+</div>
+{% endif %}
+
+<!--Latest blogs ends-->
+
+<!--Popular blogs-->
+<a href="{{ url_for('popular') }}" style="text-decoration: none; color: inherit;"><h1 class="popular-blogs fw-bold py-5 text-center" style="font-size: 75px;">POPULAR BLOGS</h1></a>
+<div class="container my-4">
+    {% if blogs %}
+    <div id="blogs-area" class="row row-cols-1 row-cols-md-3 row-cols-lg-3">
+        {% for blog in popular_blogs %}
+        <div class="col d-flex justify-content-center">
+            <div class="card border-0 hover-shadow py-3 px-2" style="width: 18rem;">
+                <img src="{{ url_for('static', filename='uploads/' ~ blog.cover_image) }}"
+                    class="card-img-top card-img img-fluid" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{blog.title}}</h5>
+                    <p class="card-text">{{blog.description}}</p>
+                    <p class="text-muted">{{blog.read_time}} min read</p>
+                    <a href="{{url_for('read', id=blog.id)}}" class="btn btn-light">READ</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="text-center text-muted mt-5">
+    <h5>No blogs found in this category.</h5>
+</div>
+{% endif %}
+<!--Popular blogs ends-->
+
+<!--CATEGORY WISE-->
+<h1 id="categories" class="fw-bold py-5 text-center" style="font-size: 75px;">CATEGORIES</h1>
+<div class="container my-4">
+    {% if blogs %}
+    <div class="category-section">
+        <div class="card-track">
+            {% for category in categories %}
+            <div class="category-card">
+                <h3 class="title fw-bold">{{ category }}</h3>
+                <p class="tag">Explore blogs on {{ category }}</p>
+                <a href="{{ url_for('category', category=category) }}" class="btn btn-outline-light  mt-2">View</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center text-muted mt-5">
+        <h5>No blogs found in this category.</h5>
+    </div>
+    {% endif %}
+    <!--CATEGORY WISE ENDS-->
+    <style>
+        .category-section {
+            background: transparent;
+            padding: 60px 20px;
+            overflow-x: auto;
+        }
+
+        .card-track {
+            display: flex;
+            gap: 0;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .category-card {
+            width: 240px;
+
+            height: 300px;
+            background: linear-gradient(85deg, #434343, #262626);
+            backdrop-filter: blur(8px);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-left: -60px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            transition: transform 0.3s, z-index 0.3s;
+            cursor: pointer;
+
+        }
+
+        /* Adjust width for tablets */
+        @media (max-width: 1200px) {
+            .category-card {
+                width: 220px !important;
+                flex: 0 0 220px !important;
+            }
+        }
+
+        /* Adjust width for mobile */
+        @media (max-width: 800px) {
+            .category-card {
+                width: 200px !important;
+                flex: 0 0 200px !important;
+            }
+        }
+
+        .category-card:hover {
+            transform: translate(-0.5rem, -1rem) rotate(3deg);
+            z-index: 99;
+        }
+
+        .category-card:first-child {
+            margin-left: 0;
+        }
+
+        .category-card:first-child:hover {
+            transform: translate(-0.5rem, -1rem) rotate(3deg);
+        }
+
+        .title {
+
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .date,
+        .tag {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin: 4px 0;
+        }
+
+        .author {
+            display: flex;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        const navbar = document.querySelector(".nav-animate")
+
+        // On page load, make sure it's transparent
+        navbar.classList.add("nav-transparent");
+
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 520) {
+                navbar.classList.add("nav-scrolled");
+                navbar.classList.remove("nav-transparent");
+            } else {
+                navbar.classList.remove("nav-scrolled");
+                navbar.classList.add("nav-transparent");
+            }
+        });
+    </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!--animation-->
+<script>
+  const isMobile = window.innerWidth <= 576;
+
+  if (isMobile) {
+    const lines = document.querySelectorAll("#masked-heading-double .clip-wrapper");
+    lines.forEach((line, index) => {
+      gsap.to(line.querySelectorAll("span"), {
+        y: 0,
+        duration: 1.2,
+        ease: "power4.out",
+        stagger: {
+          each: 0.06,
+          from: "start"
+        },
+        delay: 0.4 + index * 0.4
+      });
+    });
+
+    // ⏳ Subtitle & button wait longer on mobile
+    gsap.from(".hero-subtitle", {
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      delay: 2.5, // was 1.5, now after both lines animate
+      ease: "power2.out"
+    });
+
+    gsap.from(".read-button", {
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      delay: 3.2, // was 2.5, adjusted to come after subtitle
+      ease: "power2.out"
+    });
+
+  } else {
+    // Desktop heading
+    gsap.to("#masked-heading-single span", {
+      y: 0,
+      duration: 1.2,
+      ease: "power4.out",
+      stagger: {
+        each: 0.06,
+        from: "start"
+      },
+      delay: 0.2
+    });
+
+    // ⏳ Subtitle & button for desktop
+    gsap.from(".hero-subtitle", {
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      delay: 2,
+      ease: "power2.out"
+    });
+
+    gsap.from(".read-button", {
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      delay: 2.8,
+      ease: "power2.out"
+    });
+  }
+</script>
+
+
+    {% endblock body %}
