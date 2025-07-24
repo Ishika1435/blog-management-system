@@ -75,14 +75,38 @@
         branding: false,
         statusbar: true,
         wordcount_display: 'words',
+        placeholder: "Start writing your blog here...",
         automatic_uploads: true,
         images_upload_url: '/upload_image',
         images_upload_credentials: true,
         relative_urls: false,
         convert_urls: true,
-        placeholder: "Start writing your blog here...",
+        image_dimensions: false,
+        image_class_list: [
+            { title: 'Responsive', value: 'img-fluid' }
+        ],
+        content_style: `
+            img {
+                max-width: 100% !important;
+                height: auto !important;
+                display: block;
+                margin: 12px auto;
+            }
+        `,
+        setup: function (editor) {
+            editor.on('NodeChange', function () {
+                const imgs = editor.getDoc().querySelectorAll('img');
+                imgs.forEach(img => {
+                    img.removeAttribute('width');
+                    img.removeAttribute('height');
+                    img.removeAttribute('style');
+                    img.classList.add('img-fluid');
+                });
+            });
+        }
     });
 </script>
+
 
 <style>
     .glass-container {

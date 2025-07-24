@@ -102,6 +102,13 @@ body{
     transform: scale(1.02);
 }
 
+@media (max-width: 768px) {
+  .card-img {
+    height: 200px !important;
+  }
+}
+
+
 
 .text-wrapper{
   padding-top: 100px !important;
@@ -143,61 +150,64 @@ h1 {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
 }
 
-.navbar-nav {
-  align-items: flex-start !important;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-left: 1rem;
-}
-
-/* Keep the toggler icon vertically centered */
+/* Keep toggler absolutely positioned to top-right */
 .navbar-toggler {
-  padding: 0.25rem 0.5rem;
-  display: flex;
-  align-items: center;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  z-index: 1051; /* above collapse content */
 }
 
-/* Align nav links, dropdown toggles, and images consistently */
-.navbar-nav .nav-link,
-.navbar-nav .dropdown-toggle,
-.navbar-nav img {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  color: white;
-  padding: 0.5rem 0;
+/* Collapse menu layout for mobile */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .navbar-nav .nav-item {
+    width: 100%;
+    padding: 0.5rem 0;
+  }
+
+  .navbar .d-flex.gap-2 {
+    padding-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .navbar .btn,
+  .navbar .nav-link {
+    white-space: nowrap;
+  }
 }
 
-/* Fix dropdown menu alignment in collapsed view */
-.navbar-nav .dropdown-menu {
-  position: static;
-  float: none;
-  background-color: #111;
-  border-radius: 0.5rem;
-  margin-left: 1rem;
-  width: calc(100% - 2rem);
+.editor img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 12px auto;
 }
 
-/* Optional: Improve spacing for dropdown items */
-.dropdown-menu .dropdown-item {
-  padding: 0.5rem 1rem;
+@media (max-width: 768px) {
+  .editor {
+    padding: 0 15px;
+  }
+
+  .editor img {
+    margin: 16px 0;
+  }
 }
 
-/* Profile image spacing (if applicable) */
-.navbar-nav img {
-  margin-right: 0.5rem;
-  max-height: 30px;
-}
 
-/* Remove any extra button outlines */
-.navbar-toggler:focus {
-  box-shadow: none;
-  outline: none;
-}
 
-.dropdown-menu-light{
-  background-color: white !important;
-}
 
 
