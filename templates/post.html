@@ -66,45 +66,51 @@
 <script src="{{ url_for('static', filename='tinymce/js/tinymce/tinymce.min.js') }}"></script>
 
 <script>
-    tinymce.init({
-        selector: '#content',
-        plugins: 'lists link image code wordcount',
-        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | alignleft aligncenter alignright alignjustify | link image | code',
-        height: 600,
-        menubar: false,
-        branding: false,
-        statusbar: true,
-        wordcount_display: 'words',
-        placeholder: "Start writing your blog here...",
-        automatic_uploads: true,
-        images_upload_url: '/upload_image',
-        images_upload_credentials: true,
-        relative_urls: false,
-        convert_urls: true,
-        image_dimensions: false,
-        image_class_list: [
-            { title: 'Responsive', value: 'img-fluid' }
-        ],
-        content_style: `
-            img {
-                max-width: 100% !important;
-                height: auto !important;
-                display: block;
-                margin: 12px auto;
-            }
-        `,
-        setup: function (editor) {
-            editor.on('NodeChange', function () {
-                const imgs = editor.getDoc().querySelectorAll('img');
-                imgs.forEach(img => {
-                    img.removeAttribute('width');
-                    img.removeAttribute('height');
-                    img.removeAttribute('style');
-                    img.classList.add('img-fluid');
-                });
-            });
-        }
-    });
+  tinymce.init({
+    selector: '#content',
+    plugins: 'lists link image code wordcount',
+    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | alignleft aligncenter alignright alignjustify | link image | code',
+    image_dimensions: false,
+    image_class_list: [
+      { title: 'Responsive', value: 'img-fluid' }
+    ],
+    automatic_uploads: true,
+    content_style: `
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 12px auto;
+      }
+    `,
+    height: 600,
+    menubar: false,
+    branding: false,
+    statusbar: true,
+    wordcount_display: 'words',
+    relative_urls: false,
+    convert_urls: true,
+    placeholder: "Start writing your blog here...",
+
+    // 💡 CLOUDINARY IMAGE UPLOAD HANDLER
+    images_upload_handler: function (blobInfo, success, failure) {
+      const formData = new FormData();
+      formData.append('file', blobInfo.blob());
+      formData.append('upload_preset', 'blog_preset'); // replace with your actual upload preset
+
+      fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        success(data.secure_url); // ✅ inserts image URL into blog content
+      })
+      .catch(err => {
+        failure('Image upload failed: ' + err.message);
+      });
+    }
+  });
 </script>
 
 
