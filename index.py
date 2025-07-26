@@ -13,6 +13,15 @@ import requests
 import math
 from dotenv import load_dotenv
 load_dotenv()
+import cloudinary
+import cloudinary.uploader
+
+cloudinary.config(
+    cloud_name="dlsguyoe5",  # use yours from Cloudinary dashboard
+    api_key="256972578483481",
+    api_secret="6_BrW8aUJUeh"
+)
+
 
 #Create minimal app
 app = Flask(__name__)
@@ -244,6 +253,9 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        if len(password) < 8:
+            flash("Password must be at least 8 characters long.", "danger")
+            return redirect(url_for('signup'))
 
         #Check if user already exists 
         if User.query.filter_by(username=username).first():
@@ -488,16 +500,14 @@ def upload_image():
         return jsonify({'error': 'Empty filename'}),400
     
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)                           #makes sure the file name is safe (removes dangerous characters).
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(filepath)                                             #writes the uploaded image to static/uploads/filename.
+        try:
+            upload_result = cloudinary.uploader.upload(file)
+            image_url = upload_result['secure_url']
+            return jsonify({'location': image_url})  # TinyMCE uses "location"
+        except Exception as e:
+            print("Upload failed:", e)
+            return jsonify({'error': 'Upload failed'}), 500
 
-        file_url = url_for('static', filename=f'uploads/{filename}', _external=False)  #generates a public URL like /static/uploads/image.png.
-        if not file_url.startswith('/'):
-            file_url = '/' + file_url 
-        print("Serving image at:", file_url)  # Debug line
-        print("Final file_url returned to TinyMCE:", file_url)
-        return jsonify({'location': file_url})                            #TinyMCE expects { "location": "<image-url>" } as a JSON response.  
     return jsonify({'error': 'Invalid file type'}), 400
 
 if __name__ == "__main__":
