@@ -3,62 +3,62 @@
 {% block body %}
 <div class="text-wrapper"></div>
 <section class="create-section d-flex justify-content-center align-items-center"
-    style="min-height: 100vh; background: linear-gradient(to right, #f6f9ff, #e4ecfa);">
-    <div class="glass-container p-5 rounded-4 shadow"
-        style="width: 90%; max-width: 1200px; backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.75);">
+  style="min-height: 100vh; background: linear-gradient(to right, #f6f9ff, #e4ecfa);">
+  <div class="glass-container p-5 rounded-4 shadow"
+    style="width: 90%; max-width: 1200px; backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.75);">
 
-        <h2 class="text-center mb-4 fw-bold" style="font-family: 'Sora', sans-serif;">Create a Blog</h2>
+    <h2 class="text-center mb-4 fw-bold" style="font-family: 'Sora', sans-serif;">Create a Blog</h2>
 
-        <form action="{{ url_for('home') }}" method="POST" enctype="multipart/form-data">
-            <!-- Title -->
-            <div class="mb-4">
-                <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control rounded-3" name="title" id="title"
-                    placeholder="Enter your blog's title" required>
-            </div>
+    <form action="{{ url_for('home') }}" method="POST" enctype="multipart/form-data">
+      <!-- Title -->
+      <div class="mb-4">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control rounded-3" name="title" id="title" placeholder="Enter your blog's title"
+          required>
+      </div>
 
-            <!-- Category -->
-            <div class="mb-4">
-                <label for="category" class="form-label">Category</label>
-                <select name="category" class="form-select rounded-3" required>
-                    <option value="">Select a category</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Health">Health</option>
-                    <option value="Education">Education</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Sports">Sports</option>
-                    <option value="Travel">Travel</option>
-                    <option value="Food">Food</option>
-                    <option value="Others">Others</option>
-                </select>
-            </div>
+      <!-- Category -->
+      <div class="mb-4">
+        <label for="category" class="form-label">Category</label>
+        <select name="category" class="form-select rounded-3" required>
+          <option value="">Select a category</option>
+          <option value="Technology">Technology</option>
+          <option value="Health">Health</option>
+          <option value="Education">Education</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Sports">Sports</option>
+          <option value="Travel">Travel</option>
+          <option value="Food">Food</option>
+          <option value="Others">Others</option>
+        </select>
+      </div>
 
-            <!-- Description -->
-            <div class="mb-4">
-                <label for="description" class="form-label">Description</label>
-                <input type="text" class="form-control rounded-3" name="description" id="description"
-                    placeholder="Enter a short description...">
-            </div>
+      <!-- Description -->
+      <div class="mb-4">
+        <label for="description" class="form-label">Description</label>
+        <input type="text" class="form-control rounded-3" name="description" id="description"
+          placeholder="Enter a short description...">
+      </div>
 
-            <!-- Cover Image -->
-            <div class="mb-4">
-                <label for="cover_image" class="form-label">Cover Image</label>
-                <input type="file" class="form-control" name="cover_image" accept="image/*">
-            </div>
+      <!-- Cover Image -->
+      <div class="mb-4">
+        <label for="cover_image" class="form-label">Cover Image</label>
+        <input type="file" class="form-control" name="cover_image" accept="image/*">
+      </div>
 
-            <!-- Content Editor -->
-            <div class="mb-4">
-                <label for="content" class="form-label">Content</label>
-                <textarea id="content" name="content"></textarea>
-            </div>
+      <!-- Content Editor -->
+      <div class="mb-4">
+        <label for="content" class="form-label">Content</label>
+        <textarea id="content" name="content"></textarea>
+      </div>
 
-            <!-- Submit -->
-            <div class="text-center">
-                <button type="submit" class="btn btn-dark px-5 py-2 rounded-pill fw-semibold shadow-sm"
-                    style="transition: 0.3s;">Post Blog</button>
-            </div>
-        </form>
-    </div>
+      <!-- Submit -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-dark px-5 py-2 rounded-pill fw-semibold shadow-sm"
+          style="transition: 0.3s;">Post Blog</button>
+      </div>
+    </form>
+  </div>
 </section>
 </div>
 
@@ -102,25 +102,30 @@
         method: 'POST',
         body: formData
       })
-      .then(res => res.json())
-      .then(data => {
-        success(data.secure_url); // ✅ inserts image URL into blog content
-      })
-      .catch(err => {
-        failure('Image upload failed: ' + err.message);
-      });
+        .then(res => res.json())
+        .then(data => {
+          console.log("CLOUDINARY RESPONSE:", data);  // 🔍 inspect this
+          if (data.secure_url) {
+            success(data.secure_url); // ✅ image inserted
+          } else {
+            failure("Upload succeeded but no image URL returned.");
+          }
+        })
+        .catch(err => {
+          failure('Image upload failed: ' + err.message);
+        });
     }
   });
 </script>
 
 
 <style>
-    .glass-container {
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-    }
+  .glass-container {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+  }
 </style>
 
 {% endblock body %}
