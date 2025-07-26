@@ -70,61 +70,34 @@
     selector: '#content',
     plugins: 'lists link image code wordcount',
     toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | alignleft aligncenter alignright alignjustify | link image | code',
-    license_key: 'gpl',
-    image_dimensions: false,
-    image_class_list: [
-      { title: 'Responsive', value: 'img-fluid' }
-    ],
-    automatic_uploads: true,
-    images_upload_credentials: false,
     height: 600,
     menubar: false,
     branding: false,
-    statusbar: true,
-    wordcount_display: 'words',
+    placeholder: "Start writing your blog here...",
     relative_urls: false,
     convert_urls: true,
-    placeholder: "Start writing your blog here...",
-    content_style: `
-      img {
-        max-width: 100% !important;
-        height: auto !important;
-        display: block;
-        margin: 12px auto;
-      }
-    `,
+    automatic_uploads: true,
 
-    // ✅ Cloudinary Upload Handler for Images from Device
+    // ✅ This is the key part
     images_upload_handler: function (blobInfo, success, failure) {
-      const file = blobInfo.blob();
-
-      if (!file || file.size === 0) {
-        failure('No file selected or file is empty.');
-        return;
-      }
-
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', 'blog_preset'); // Replace with your unsigned preset name
+      formData.append('file', blobInfo.blob(), blobInfo.filename());
 
-      fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
+      fetch('/upload_image', {
         method: 'POST',
         body: formData
       })
-      .then(res => {
-        if (!res.ok) throw new Error('Cloudinary upload failed');
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
-        if (data.secure_url) {
-          success(data.secure_url); // ✅ This is the image URL TinyMCE uses
+        if (data.location) {
+          success(data.location); // TinyMCE inserts this image
         } else {
-          failure('Image uploaded but URL missing');
+          failure('Upload succeeded but no image URL returned');
         }
       })
       .catch(err => {
-        console.error("Image upload failed:", err);
-        failure('Image upload error: ' + err.message);
+        console.error('Upload failed:', err);
+        failure('Upload failed: ' + err.message);
       });
     }
   });
