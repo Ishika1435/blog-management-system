@@ -77,14 +77,6 @@
     ],
     automatic_uploads: true,
     images_upload_credentials: false,
-    content_style: `
-      img {
-        max-width: 100% !important;
-        height: auto !important;
-        display: block;
-        margin: 12px auto;
-      }
-    `,
     height: 600,
     menubar: false,
     branding: false,
@@ -93,31 +85,67 @@
     relative_urls: false,
     convert_urls: true,
     placeholder: "Start writing your blog here...",
+    content_style: `
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 12px auto;
+      }
+    `,
 
     images_upload_handler: function (blobInfo, success, failure) {
-      const formData = new FormData();
-      formData.append('file', blobInfo.blob());
-      formData.append('upload_preset', 'blog_preset');
-
-      fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
-        method: 'POST',
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log("CLOUDINARY RESPONSE:", data);
-        if (data.secure_url) {
-          success(data.secure_url.toString()); // 👈 this is key
-        } else {
-          failure("Upload succeeded but no image URL returned.");
+      try {
+        // ✅ Strict null check
+        if (!blobInfo || !blobInfo.blob) {
+          failure('Invalid image data.');
+          return;
         }
-      })
-      .catch(err => {
-        failure('Image upload failed: ' + err.message);
-      });
+
+        const file = blobInfo.blob();
+
+        // ✅ Check before proceeding
+        if (!file || file.size === 0) {
+          failure('Empty file uploaded.');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'blog_preset');  // ✅ Make sure this preset exists and is unsigned
+
+        fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Cloudinary responded with status ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          console.log("✅ CLOUDINARY RESPONSE:", data);
+          if (data.secure_url) {
+            success(data.secure_url);
+            alert('Image uploaded successfully!');
+          } else {
+            failure("Upload succeeded but no secure_url returned.");
+          }
+        })
+        .catch(err => {
+          console.error("❌ Upload error:", err);
+          failure('Image upload failed: ' + err.message);
+        });
+
+      } catch (err) {
+        console.error("❌ Unexpected error:", err);
+        failure("Unexpected error: " + err.message);
+      }
     }
   });
 </script>
+
 
 
 
