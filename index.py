@@ -489,6 +489,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+"""
 #handling image uploads from TinyMCE and returning the image URL back to TinyMCE so it can insert it into the content.
 @app.route('/upload_image',methods = ['POST'])
 def upload_image():
@@ -509,7 +510,7 @@ def upload_image():
             return jsonify({'error': 'Upload failed'}), 500
 
     return jsonify({'error': 'Invalid file type'}), 400
-
+"""
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
