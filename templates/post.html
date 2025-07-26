@@ -94,57 +94,42 @@
       }
     `,
 
+    // ✅ Cloudinary Upload Handler for Images from Device
     images_upload_handler: function (blobInfo, success, failure) {
-      try {
-        // ✅ Strict null check
-        if (!blobInfo || !blobInfo.blob) {
-          failure('Invalid image data.');
-          return;
-        }
+      const file = blobInfo.blob();
 
-        const file = blobInfo.blob();
-
-        // ✅ Check before proceeding
-        if (!file || file.size === 0) {
-          failure('Empty file uploaded.');
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', 'blog_preset');  // ✅ Make sure this preset exists and is unsigned
-
-        fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
-          method: 'POST',
-          body: formData
-        })
-        .then(res => {
-          if (!res.ok) {
-            throw new Error(`Cloudinary responded with status ${res.status}`);
-          }
-          return res.json();
-        })
-        .then(data => {
-          console.log("✅ CLOUDINARY RESPONSE:", data);
-          if (data.secure_url) {
-            success(data.secure_url);
-            alert('Image uploaded successfully!');
-          } else {
-            failure("Upload succeeded but no secure_url returned.");
-          }
-        })
-        .catch(err => {
-          console.error("❌ Upload error:", err);
-          failure('Image upload failed: ' + err.message);
-        });
-
-      } catch (err) {
-        console.error("❌ Unexpected error:", err);
-        failure("Unexpected error: " + err.message);
+      if (!file || file.size === 0) {
+        failure('No file selected or file is empty.');
+        return;
       }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'blog_preset'); // Replace with your unsigned preset name
+
+      fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Cloudinary upload failed');
+        return res.json();
+      })
+      .then(data => {
+        if (data.secure_url) {
+          success(data.secure_url); // ✅ This is the image URL TinyMCE uses
+        } else {
+          failure('Image uploaded but URL missing');
+        }
+      })
+      .catch(err => {
+        console.error("Image upload failed:", err);
+        failure('Image upload error: ' + err.message);
+      });
     }
   });
 </script>
+
 
 
 
