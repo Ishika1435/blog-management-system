@@ -78,7 +78,6 @@
     convert_urls: true,
     automatic_uploads: true,
 
-    // ✅ This is the key part
     images_upload_handler: function (blobInfo, success, failure) {
       const formData = new FormData();
       formData.append('file', blobInfo.blob(), blobInfo.filename());
@@ -87,17 +86,18 @@
         method: 'POST',
         body: formData
       })
-      .then(res => res.json())
+      .then(response => response.json())
       .then(data => {
         if (data.location) {
-          success(data.location); // TinyMCE inserts this image
+          success(data.location);
         } else {
-          failure('Upload succeeded but no image URL returned');
+          console.error("No location returned:", data);
+          failure(data.error || "Upload succeeded but no image URL returned");
         }
       })
-      .catch(err => {
-        console.error('Upload failed:', err);
-        failure('Upload failed: ' + err.message);
+      .catch(error => {
+        console.error("Upload error:", error);
+        failure("Upload failed: " + error.message);
       });
     }
   });
