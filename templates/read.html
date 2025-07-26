@@ -14,7 +14,7 @@
 
         <!-- Blog Author and Date -->
         <div class="d-flex justify-content-between text-muted border-top pt-3 small">
-            <span>By: <strong>{{ blog.author }}</strong></span>
+            <a href="{{url_for('user_info', username=blog.author)}}" class="text-decoration-none text-dark"><span>By: <strong>{{ blog.author }}</strong></span></a>
             <span>Posted on: {{ blog.date_posted.strftime('%B %d, %Y') }}</span>
         </div>
 
