@@ -76,6 +76,7 @@
       { title: 'Responsive', value: 'img-fluid' }
     ],
     automatic_uploads: true,
+    images_upload_credentials: false,
     content_style: `
       img {
         max-width: 100% !important;
@@ -93,31 +94,31 @@
     convert_urls: true,
     placeholder: "Start writing your blog here...",
 
-      // 💡 CLOUDINARY IMAGE UPLOAD HANDLER
-      images_upload_handler: function (blobInfo, success, failure) {
-        const formData = new FormData();
-        formData.append('file', blobInfo.blob());
-        formData.append('upload_preset', 'blog_preset'); // replace with your actual upload preset
+    images_upload_handler: function (blobInfo, success, failure) {
+      const formData = new FormData();
+      formData.append('file', blobInfo.blob());
+      formData.append('upload_preset', 'blog_preset');
 
-        return fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
-          method: 'POST',
-          body: formData
-        })
-          .then(res => res.json())
-          .then(data => {
-            console.log("CLOUDINARY RESPONSE:", data);  // 🔍 inspect this
-            if (data.secure_url) {
-              success(data.secure_url); // ✅ image inserted
-            } else {
-              failure("Upload succeeded but no image URL returned.");
-            }
-          })
-          .catch(err => {
-            failure('Image upload failed: ' + err.message);
-          });
-      }
-    });
+      fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log("CLOUDINARY RESPONSE:", data);
+        if (data.secure_url) {
+          success(data.secure_url.toString()); // 👈 this is key
+        } else {
+          failure("Upload succeeded but no image URL returned.");
+        }
+      })
+      .catch(err => {
+        failure('Image upload failed: ' + err.message);
+      });
+    }
+  });
 </script>
+
 
 
 <style>
