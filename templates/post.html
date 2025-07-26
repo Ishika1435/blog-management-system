@@ -98,7 +98,7 @@
       formData.append('file', blobInfo.blob());
       formData.append('upload_preset', 'blog_preset'); // replace with your actual upload preset
 
-      fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
+      return fetch('https://api.cloudinary.com/v1_1/dlsguyoe5/image/upload', {
         method: 'POST',
         body: formData
       })
