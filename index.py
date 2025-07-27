@@ -393,6 +393,15 @@ def edit(id):
             image.save(image_path)  # ✅ Save the image to disk
             blog.cover_image = filename  # ✅ Save just the filename to the database
 
+        soup = BeautifulSoup(blog.content, 'html.parser')
+        for img in soup.find_all('img'):
+            classes = img.get('class', [])
+            if 'img-fluid' not in classes:
+                classes.append('img-fluid')
+                img['class'] = classes
+
+        blog.content = str(soup)
+
         
         # Recalculate reading time
         blog.read_time = calculate_read_time(blog.content)
