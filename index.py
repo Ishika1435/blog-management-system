@@ -492,17 +492,17 @@ def allowed_file(filename):
 
 #handling image uploads from TinyMCE and returning the image URL back to TinyMCE so it can insert it into the content.
 @app.route('/upload_image', methods=['POST'])
-def upload_image():
-    if 'file' not in request.files:
+def upload_image():                                                            #This route is hit by the JS fetch request.
+    if 'file' not in request.files:                                    # If request doesn't have the 'file' field (maybe frontend is broken), it returns error.
         print("No file in request")
         return jsonify({'error': 'No file uploaded'}), 400
 
     file = request.files['file']
-    if file.filename == '':
+    if file.filename == '':                                             #User didn't select any file.
         print("Empty filename")
         return jsonify({'error': 'Empty filename'}), 400
 
-    if file and allowed_file(file.filename):
+    if file and allowed_file(file.filename):                            #Checks if the file has allowed extension
         try:
             upload_result = cloudinary.uploader.upload(file)
             image_url = upload_result['secure_url']

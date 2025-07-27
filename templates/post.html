@@ -82,11 +82,15 @@
       const formData = new FormData();
       formData.append('file', blobInfo.blob(), blobInfo.filename());
 
-      fetch('/upload_image', {
+      // ◀️ **RETURN** the fetch promise back to TinyMCE
+      return fetch('/upload_image', {
         method: 'POST',
         body: formData
       })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) throw new Error("HTTP error " + response.status);
+        return response.json();
+      })
       .then(data => {
         if (data.location) {
           success(data.location);
@@ -102,6 +106,7 @@
     }
   });
 </script>
+
 
 
 
