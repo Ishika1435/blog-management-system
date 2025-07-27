@@ -64,63 +64,36 @@
 
 <!-- TinyMCE Script -->
 <script src="{{ url_for('static', filename='tinymce/js/tinymce/tinymce.min.js') }}"></script>
-<!-- TinyMCE Script -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
 <script>
-      tinymce.init({
-        selector: "#content",
-        plugins: "lists link image code wordcount",
-        toolbar: "undo redo | bold italic underline | bullist numlist | alignleft aligncenter alignright | link image | code",
-        menubar: false,
-        height: 600,
-        relative_urls: false,
-        convert_urls: true,
+  tinymce.init({
+    selector: '#content',
+    plugins: 'lists link image code wordcount',
+    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | alignleft aligncenter alignright alignjustify | link image | code',
+    menubar: false,
+    branding: false,
+    height: 600,
 
-        // This tells TinyMCE to open our custom file picker
-        file_picker_callback: function(cb, value, meta) {
-          if (meta.filetype === "image") {
-            const input = $("<input>")
-              .attr("type", "file")
-              .attr("accept", "image/*")
-              .on("change", function() {
-                const file = this.files[0];
-                if (!file) return;
+    /* hide the “Upload” tab; only show General → Source */
+    image_uploadtab: false,
 
-                // Build form data
-                const formData = new FormData();
-                formData.append("file", file);
+    /* allow pasting absolute URLs */
+    relative_urls: false,
+    convert_urls: true,
+    image_title: true,       // shows the Title/Source field
+    automatic_uploads: false, // no automatic uploads
 
-                // Show a loading state
-                cb("loading.gif", { title: "Uploading..." });
-
-                // AJAX to Flask
-                $.ajax({
-                  url: "/upload_image",
-                  method: "POST",
-                  data: formData,
-                  processData: false,
-                  contentType: false,
-                })
-                .done(function(res) {
-                  if (res.location) {
-                    cb(res.location, { title: file.name });
-                  } else {
-                    alert("Upload failed: " + (res.error||"no URL returned"));
-                  }
-                })
-                .fail(function(xhr) {
-                  const err = xhr.responseJSON?.error || xhr.statusText;
-                  alert("Upload error: " + err);
-                });
-              });
-
-            // Trigger the file picker
-            input[0].click();
-          }
-        }
-      });
-    </script>
+    /* force any <img> in the editor to be fluid */
+    content_style: `
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 1em auto;
+      }
+    `
+  });
+</script>
 
 
 

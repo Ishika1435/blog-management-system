@@ -81,6 +81,11 @@ def home():
             src = img.get('src', '')
             if src and not src.startswith('/'):
                 img['src'] = '/' + src
+            classes = img.get('class', [])
+            if 'img-fluid' not in classes:
+                classes.append('img-fluid')
+                img['class'] = classes
+
         content = str(soup)
 
         # Read time calculation
