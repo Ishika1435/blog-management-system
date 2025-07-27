@@ -66,45 +66,34 @@
 <script src="{{ url_for('static', filename='tinymce/js/tinymce/tinymce.min.js') }}"></script>
 
 <script>
-  tinymce.init({
-    selector: '#content',
-    plugins: 'lists link image code wordcount',
-    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | alignleft aligncenter alignright alignjustify | link image | code',
-    height: 600,
-    menubar: false,
-    branding: false,
-    placeholder: "Start writing your blog here...",
-    relative_urls: false,
-    convert_urls: true,
-    automatic_uploads: true,
+tinymce.init({
+  selector: '#content',
+  plugins: 'lists link image code wordcount',
+  toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | alignleft aligncenter alignright alignjustify | link image | code',
+  height: 600,
+  menubar: false,
+  branding: false,
+  placeholder: "Start writing your blog here...",
+  relative_urls: false,
+  convert_urls: true,
+  automatic_uploads: true,
 
-    images_upload_handler: function (blobInfo, success, failure) {
-      const formData = new FormData();
-      formData.append('file', blobInfo.blob(), blobInfo.filename());
+  // ★ Tell TinyMCE where to POST image files
+  images_upload_url: '/upload_image',
 
-      // ◀️ **RETURN** the fetch promise back to TinyMCE
-      return fetch('/upload_image', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => {
-        if (!response.ok) throw new Error("HTTP error " + response.status);
-        return response.json();
-      })
-      .then(data => {
-        if (data.location) {
-          success(data.location);
-        } else {
-          console.error("No location returned:", data);
-          failure(data.error || "Upload succeeded but no image URL returned");
-        }
-      })
-      .catch(error => {
-        console.error("Upload error:", error);
-        failure("Upload failed: " + error.message);
-      });
+  // ★ Ensure it sends cookies/auth if you need them (you usually do)
+  images_upload_credentials: true,
+
+  // ★ Make any local images automatically responsive
+  content_style: `
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+      display: block;
+      margin: 12px auto;
     }
-  });
+  `,
+});
 </script>
 
 
