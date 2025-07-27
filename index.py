@@ -78,9 +78,9 @@ def home():
         # Fix image paths
         soup = BeautifulSoup(content, 'html.parser')
         for img in soup.find_all('img'):
-            src = img.get('src', '')
-            if src and not src.startswith('/'):
-                img['src'] = '/' + src
+            #src = img.get('src', '')
+            #if src and not src.startswith('/'):
+                #img['src'] = '/' + src
             classes = img.get('class', [])
             if 'img-fluid' not in classes:
                 classes.append('img-fluid')
