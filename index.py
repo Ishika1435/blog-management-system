@@ -17,9 +17,10 @@ import cloudinary
 import cloudinary.uploader
 
 cloudinary.config(
-    cloud_name="dlsguyoe5",  # use yours from Cloudinary dashboard
+    cloud_name="dlsguyoe5", 
     api_key="256972578483481",
-    api_secret="6_BrW8aUJUeh"
+    api_secret="6_BrW8aUJUeh",
+    secure = True
 )
 
 
@@ -491,29 +492,28 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 #handling image uploads from TinyMCE and returning the image URL back to TinyMCE so it can insert it into the content.
-@app.route('/upload_image', methods=['POST'])
-def upload_image():                                                            #This route is hit by the JS fetch request.
-    if 'file' not in request.files:                                    # If request doesn't have the 'file' field (maybe frontend is broken), it returns error.
-        print("No file in request")
-        return jsonify({'error': 'No file uploaded'}), 400
+@app.route("/upload_image", methods=["POST"])
+def upload_image():
+    if 'file' not in request.files:
+        return jsonify({ "error": "No file uploaded" }), 400
 
     file = request.files['file']
-    if file.filename == '':                                             #User didn't select any file.
-        print("Empty filename")
-        return jsonify({'error': 'Empty filename'}), 400
+    if file.filename == "":
+        return jsonify({ "error": "Empty filename" }), 400
 
-    if file and allowed_file(file.filename):                            #Checks if the file has allowed extension
-        try:
-            upload_result = cloudinary.uploader.upload(file)
-            image_url = upload_result['secure_url']
-            print("✅ Uploaded to:", image_url)
-            return jsonify({'location': image_url})  # TinyMCE expects "location" field
-        except Exception as e:
-            print("❌ Upload failed:", str(e))
-            return jsonify({'error': 'Upload failed: ' + str(e)}), 500
+    if not allowed_file(file.filename):
+        return jsonify({ "error": "Invalid file type" }), 400
 
-    print("Invalid file type:", file.filename)
-    return jsonify({'error': 'Invalid file type'}), 400
+    try:
+        result = cloudinary.uploader.upload(file)
+        url    = result.get("secure_url")
+        if not url:
+            raise Exception("No secure_url in Cloudinary response")
+        return jsonify({ "location": url })  # TinyMCE looks for “location”
+    except Exception as e:
+        print("  upload_image error:", e)
+        return jsonify({ "error": str(e) }), 500
+
 
 
 if __name__ == "__main__":
