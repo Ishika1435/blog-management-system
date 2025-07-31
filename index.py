@@ -27,9 +27,9 @@ cloudinary.config(
 #Create minimal app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db=SQLAlchemy(app)                                                  #For database
-login_manager = LoginManager()
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False                    #disables the features that track object modification
+db=SQLAlchemy(app)                                                  #For database and python class interaction
+login_manager = LoginManager()                              
 login_manager.init_app(app)
 login_manager.login_view = 'login'                      #Redirects users to the /login page if they try to access a protected page
 app.secret_key = os.environ.get('SECRET_KEY')        # features like session[] won’t work securely if secret key not used, prevents data tampering by the user
@@ -37,7 +37,7 @@ migrate = Migrate(app,db)                                       #To modify data
 UPLOAD_FOLDER = os.path.join('static', 'uploads')               #Creates folder if not already exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)                           #ensures you don’t get an error if the folder already exists.
 CLIENT_ID = os.environ.get('CLIENT_ID')
-CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')                 #google auth - keys
 REDIRECT_URI = os.environ.get('REDIRECT_URI')
 
 #Class Blog - create columns for database
@@ -75,7 +75,7 @@ def home():
         if not content.strip() or content.strip() == '<p><br></p>':
             return "Content is empty!", 400
 
-        # Fix image paths
+        # Fix image's resposiveness
         soup = BeautifulSoup(content, 'html.parser')
         for img in soup.find_all('img'):
             #src = img.get('src', '')
@@ -109,7 +109,7 @@ def home():
             user_id=current_user.id,
             category=category,
             cover_image=image_filename,
-            #catergories=category,  # <-- Check your model field name here!
+            #catergories=category, 
             read_time=read_time
         )
         db.session.add(blog)
@@ -131,7 +131,7 @@ def home():
         blogs=blogs,
         categories=categories,
         latest_blogs=latest_blogs,
-        popular_blogs=popular_blogs
+        popular_blogs=popular_blogs                         #Left side are names in html and right side are names in flask
     )
 
 #To check if the cover image type is allowed or not 
@@ -272,11 +272,6 @@ def register():
             flash("Email already exists. Please use a different one")
             return redirect(url_for('register'))
         
-        #token = generate_verification_token(email)
-        #verify_url = url_for('verify_email', token=token, _external=True)
-        #html = render_template('verify_email.html', verify_url=verify_url)
-        #subject = 'Please verify email'
-        
         #To create and save new user
         new_user=User(username=username, email=email)
         new_user.set_password(password)
@@ -289,7 +284,7 @@ def register():
     
     return render_template("register.html")
 
-#step 1 - redirect to google
+#Redirect to google
 @app.route("/auth/google")
 def login_with_google():
         google_url = (
@@ -302,14 +297,14 @@ def login_with_google():
         )
         return redirect(google_url)
 
-#step 2 - callback from google
+#Callback from google
 @app.route("/auth/callback")
 def google_callback():
-    code = request.args.get('code')  # use args not arg
+    code = request.args.get('code')
 
-    # Step 1: Exchange code for access token
+    #Exchange code for access token
     token_resp = requests.post("https://oauth2.googleapis.com/token", data={
-        "code": code,
+        "code": code,                           #After a user logs in with Google, Google sends your app a code (authorization code) in the callback URL.
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
         "redirect_uri": REDIRECT_URI,
